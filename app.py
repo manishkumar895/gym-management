@@ -29,6 +29,7 @@ from flask import (
     session,
     url_for,
 )
+from flask import send_from_directory
 from werkzeug.security import check_password_hash, generate_password_hash
 BASE_DIR = Path(__file__).resolve().parent
 load_dotenv(BASE_DIR / ".env")
@@ -1602,6 +1603,19 @@ def login():
         next_url=next_url,
         registration_open=registration_open,
     )
+
+@app.route("/sw.js")
+def service_worker():
+    response = send_from_directory(
+        app.static_folder,
+        "sw.js",
+        mimetype="application/javascript"
+    )
+    response.headers["Service-Worker-Allowed"] = "/"
+    response.headers["Cache-Control"] = "no-cache"
+    return response
+
+
 @app.route("/logout", methods=["POST"])
 @login_required
 def logout():
