@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Members{% endblock %}
+{% block breadcrumb %}Members{% endblock %}
+{% block content %}
+<div class="page-heading">
+  <div><p class="eyebrow">YOUR COMMUNITY</p><h1>Members</h1><p class="page-subtitle">{{ members|length }} registered member{% if members|length != 1 %}s{% endif %} in your gym.</p></div>
+  <a class="button button-primary" href="{{ url_for('add_member') }}"><span>＋</span> Add member</a>
+</div>
+<section class="content-section members-section">
+  <div class="section-heading"><div><p class="eyebrow">MEMBER DIRECTORY</p><h2>All members</h2></div><span class="directory-count">{{ '%02d'|format(members|length) }} RECORDS</span></div>
+  <form class="member-search" method="get" action="{{ url_for('members') }}" role="search">
+    <label class="field" for="member-search">Search members</label>
+    <input id="member-search" name="q" type="search" value="{{ search_query }}" placeholder="Name, phone, email, or plan" maxlength="120">
+    <button class="button button-quiet" type="submit">Search</button>
+    {% if search_query %}<a class="button button-quiet" href="{{ url_for('members') }}">Clear</a>{% endif %}
+  </form>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>MEMBER</th><th>PHONE</th><th>PLAN</th><th>MONTHLY FEE</th><th>STATUS</th><th>ACTION</th></tr></thead>
+      <tbody>
+        {% for member in members %}
+          <tr>
+            <td><a class="member-cell member-cell-link" href="{{ url_for('member_profile', member_id=member.id) }}"><span class="member-avatar avatar-tone-{{ loop.index0 % 4 }}">{{ member.name[:1]|upper }}</span><span><strong>{{ member.name }}</strong><small>Member #{{ '%04d'|format(member.id) }}</small></span></a></td>
+            <td>{{ member.phone }}</td><td>{{ member.membership_plan }}</td>
+            <td>₹{{ '%.2f'|format(member.monthly_fee) }}</td>
+            <td><span class="status-pill {% if member.status == 'Active' %}status-active{% else %}status-inactive{% endif %}"><i></i>{{ member.status }}</span></td>
+            <td><a class="edit-link" href="{{ url_for('member_profile', member_id=member.id) }}">Profile</a><a class="edit-link edit-link-secondary" href="{{ url_for('edit_member', member_id=member.id) }}" aria-label="Edit {{ member.name }}">Edit</a></td>
+          </tr>
+        {% else %}
+          <tr><td colspan="6"><div class="empty-state"><span class="empty-icon">＋</span><strong>Your member list is ready</strong><p>Members you add will appear here.</p><a class="button button-small" href="{{ url_for('add_member') }}">Add a member</a></div></td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

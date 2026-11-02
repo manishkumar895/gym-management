@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Payment History{% endblock %}
+{% block breadcrumb %}Payment history{% endblock %}
+{% block content %}
+<div class="page-heading">
+  <div><p class="eyebrow">MEMBER / PAYMENT HISTORY</p><h1>{{ member.name }}</h1><p class="page-subtitle">Complete payment history for member #{{ '%04d'|format(member.id) }}.</p></div>
+  <div class="heading-actions"><a class="button button-quiet" href="{{ url_for('member_profile', member_id=member.id) }}">← Member profile</a><a class="button button-primary" href="{{ url_for('add_payment') }}?member_id={{ member.id }}"><span>＋</span> Record payment</a></div>
+</div>
+<section class="content-section members-section">
+  <div class="table-wrap"><table>
+    <thead><tr><th>PAYMENT DATE</th><th>AMOUNT</th><th>METHOD</th><th>DURATION</th><th>MEMBERSHIP PERIOD</th><th>TRANSACTION ID</th><th>NOTES</th><th></th></tr></thead>
+    <tbody>{% for payment in payments %}
+      <tr><td>{{ payment.payment_date }}</td><td class="amount-cell">₹{{ '%.2f'|format(payment.amount) }}</td><td>{{ payment.payment_method }}</td><td>{{ payment.duration_months }} month{% if payment.duration_months != 1 %}s{% endif %}</td><td>{{ payment.start_date }} – {{ payment.expiry_date }}</td><td>{{ payment.transaction_id or '—' }}</td><td class="notes-cell">{{ payment.notes or '—' }}</td><td><a class="edit-link" href="{{ url_for('payment_receipt', payment_id=payment.id) }}">View Receipt</a></td></tr>
+    {% else %}<tr><td colspan="8"><div class="empty-state"><span class="empty-icon">↗</span><strong>No payments for {{ member.name }} yet</strong><p>New payments recorded for this member will appear here.</p><a class="button button-small" href="{{ url_for('add_payment') }}?member_id={{ member.id }}">Record a payment</a></div></td></tr>{% endfor %}</tbody>
+  </table></div>
+</section>
+{% endblock %}

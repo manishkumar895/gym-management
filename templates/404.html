@@ -1,0 +1,5 @@
+{% extends "base.html" %}
+{% block title %}Page not found{% endblock %}
+{% block content %}
+<div class="not-found"><p class="eyebrow">404 / NOT FOUND</p><h1>This page isn't here.</h1><a class="button button-primary" href="{{ url_for('dashboard') }}">Back to dashboard</a></div>
+{% endblock %}

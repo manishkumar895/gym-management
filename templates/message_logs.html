@@ -1,0 +1,144 @@
+
+{% extends "base.html" %}
+
+{% block title %}Email Logs{% endblock %}
+{% block breadcrumb %}Email logs{% endblock %}
+
+{% block content %}
+
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">COMMUNICATION / EMAIL HISTORY</p>
+        <h1>Email Logs</h1>
+        <p class="page-subtitle">
+            Monitor membership emails, delivery status and failed attempts.
+        </p>
+    </div>
+
+    <a class="button button-quiet" href="{{ url_for('dashboard') }}">
+        ← Back to dashboard
+    </a>
+</div>
+
+<section class="form-section">
+
+    <div class="form-section-heading">
+        <span class="form-index">01</span>
+        <div>
+            <h2>Email delivery history</h2>
+            <p>Recent email notifications sent by the gym system.</p>
+        </div>
+    </div>
+
+    {% if logs %}
+
+    <div style="overflow-x:auto;">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Member</th>
+                    <th>Recipient</th>
+                    <th>Email type</th>
+                    <th>Status</th>
+                    <th>Attempts</th>
+                    <th>Created at</th>
+                    <th>Last error</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for log in logs %}
+                <tr>
+                    <td>
+                        <strong>
+                            {{ log.member_name or 'Unknown member' }}
+                        </strong>
+                    </td>
+
+                    <td>{{ log.recipient }}</td>
+
+                    <td>
+                        {% if log.reminder_type == 'welcome' %}
+                            Welcome email
+                        {% elif log.reminder_type == '7_day' %}
+                            7-day reminder
+                        {% elif log.reminder_type == '3_day' %}
+                            3-day reminder
+                        {% elif log.reminder_type == 'expiry_day' %}
+                            Expiry-day reminder
+                        {% else %}
+                            {{ log.reminder_type|replace('_', ' ')|title }}
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if log.status == 'sent' %}
+                            <span class="status-badge status-active">Sent</span>
+                        {% elif log.status == 'failed' %}
+                            <span class="status-badge status-inactive">Failed</span>
+                        {% elif log.status == 'sending' %}
+                            <span class="status-badge">Sending</span>
+                        {% else %}
+                            <span class="status-badge">{{ log.status|title }}</span>
+                        {% endif %}
+                    </td>
+
+                    <td>{{ log.attempts }}</td>
+
+                    <td>
+                        {{ log.created_at or '—' }}
+                    </td>
+
+                    <td>
+                        {% if log.error %}
+                            <span title="{{ log.error }}">
+                                {{ log.error|truncate(45, True, '...') }}
+                            </span>
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if log.status == 'failed' and log.attempts < 5 %}
+                            <form method="post"
+                                  action="{{ url_for('retry_email', log_id=log.id) }}"
+                                  onsubmit="return confirm('Retry this email?');">
+
+                                <button class="button button-primary"
+                                        type="submit">
+                                    Retry
+                                </button>
+                            </form>
+                        {% elif log.status == 'failed' %}
+                            <span class="status-badge status-inactive">
+                                Max attempts reached
+                            </span>
+                        {% elif log.status == 'sent' %}
+                            <span>Completed</span>
+                        {% else %}
+                            <span>In progress</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% else %}
+
+    <div style="text-align:center; padding:40px 20px;">
+        <h3>No email logs found</h3>
+        <p class="page-subtitle">
+            Email notification records will appear here when the system
+            starts sending emails.
+        </p>
+    </div>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}

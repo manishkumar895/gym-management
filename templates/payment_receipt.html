@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Payment Receipt{% endblock %}
+{% block breadcrumb %}Payment receipt{% endblock %}
+{% block content %}
+<div class="page-heading receipt-page-heading">
+  <div><p class="eyebrow">PAYMENTS / RECEIPT #{{ '%05d'|format(payment.id) }}</p><h1>Payment receipt</h1><p class="page-subtitle">Print this receipt or choose Save as PDF in your browser's print dialog.</p></div>
+  <div class="heading-actions receipt-actions">
+    <a class="button button-quiet" href="{{ url_for('payments') }}">← Payments</a>
+    <button class="button button-primary" type="button" onclick="window.print()">Print Receipt <span>↗</span></button>
+  </div>
+</div>
+<article class="receipt-card">
+  <header class="receipt-header">
+    <div><p class="eyebrow">GYM MEMBERSHIP</p><h2>{{ gym_name }}</h2></div>
+    <div class="receipt-number"><span>RECEIPT</span><strong>#{{ '%05d'|format(payment.id) }}</strong></div>
+  </header>
+  <div class="receipt-status">PAYMENT RECEIVED</div>
+  <div class="receipt-amount"><span>Amount paid</span><strong>₹{{ '%.2f'|format(payment.amount) }}</strong></div>
+  <dl class="receipt-details">
+    <div><dt>Member name</dt><dd>{{ payment.member_name }}</dd></div>
+    <div><dt>Mobile number</dt><dd>{{ payment.member_phone }}</dd></div>
+    <div><dt>Payment date</dt><dd>{{ payment.payment_date }}</dd></div>
+    <div><dt>Payment method</dt><dd>{{ payment.payment_method }}</dd></div>
+    <div><dt>Membership plan</dt><dd>{{ payment.membership_plan or '—' }}</dd></div>
+    <div><dt>Membership start date</dt><dd>{{ payment.start_date }}</dd></div>
+    <div><dt>Membership expiry date</dt><dd>{{ payment.expiry_date }}</dd></div>
+  </dl>
+  <footer class="receipt-footer"><span>Thank you for choosing {{ gym_name }}.</span><span>Receipt #{{ '%05d'|format(payment.id) }}</span></footer>
+</article>
+{% endblock %}

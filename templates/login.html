@@ -1,0 +1,83 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f5f1">
+  <title>Admin Login | Form & Function</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+<main class="login-shell">
+  <section class="login-card">
+
+    <a class="brand login-brand" href="{{ url_for('login') }}">
+      <span class="brand-mark">F<span>+</span></span>
+      <span class="brand-copy">
+        <strong>FORM / FUNCTION</strong>
+        <small>GYM MANAGEMENT</small>
+      </span>
+    </a>
+
+    <p class="eyebrow">ADMINISTRATION</p>
+    <h1>Admin login</h1>
+    <p class="login-subtitle">Sign in to manage your gym.</p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-stack" role="alert">
+          {% for category, message in messages %}
+            <div class="flash flash-{{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <form class="login-form" method="POST" action="{{ url_for('login') }}">
+
+      <input type="hidden" name="next" value="{{ next_url }}">
+
+      <label class="field" for="username">
+        Username
+        <input
+          id="username"
+          name="username"
+          type="text"
+          autocomplete="username"
+          required
+          autofocus
+          value="{{ request.form.get('username', '') }}">
+      </label>
+
+      <label class="field" for="password">
+        Password
+        <input
+          id="password"
+          name="password"
+          type="password"
+          autocomplete="current-password"
+          required>
+      </label>
+
+      <button class="button button-primary" type="submit">
+        Log in
+      </button>
+
+    </form>
+
+    <div class="register-link">
+      <p>Don't have an admin account?</p>
+      <a href="{{ url_for('register') }}">Create an account</a>
+    </div>
+
+  </section>
+</main>
+</body>
+</html>

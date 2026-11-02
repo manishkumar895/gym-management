@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f5f1">
+  <title>{% block title %}Dashboard{% endblock %} | Form & Function</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="manifest" href="/static/manifest.json">
+  <meta name="theme-color" content="#111827">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="{{ url_for('dashboard') }}" aria-label="Form and Function dashboard">
+        <span class="brand-mark">F<span>+</span></span>
+        <span class="brand-copy"><strong>FORM / FUNCTION</strong><small>GYM MANAGEMENT</small></span>
+      </a>
+      <div class="nav-label">WORKSPACE</div>
+      <nav class="main-nav" aria-label="Main navigation">
+        <a class="nav-link {% if request.endpoint == 'dashboard' %}is-active{% endif %}" href="{{ url_for('dashboard') }}">
+          <span class="nav-icon">⌂</span><span>Dashboard</span>
+        </a>
+        <a class="nav-link {% if request.endpoint == 'members' %}is-active{% endif %}" href="{{ url_for('members') }}">
+          <span class="nav-icon">♙</span><span>Members</span>
+        </a>
+        <a class="nav-link {% if request.endpoint == 'add_member' %}is-active{% endif %}" href="{{ url_for('add_member') }}">
+          <span class="nav-icon">＋</span><span>Add member</span>
+        </a>
+        <a class="nav-link {% if request.endpoint == 'payments' %}is-active{% endif %}" href="{{ url_for('payments') }}">
+          <span class="nav-icon">↗</span><span>Payments</span>
+        </a>
+        <a class="nav-link {% if request.endpoint == 'add_payment' %}is-active{% endif %}" href="{{ url_for('add_payment') }}">
+          <span class="nav-icon">＄</span><span>Record payment</span>
+        </a>
+        <a class="nav-link {% if request.endpoint == 'due_fees' %}is-active{% endif %}" href="{{ url_for('due_fees') }}">
+          <span class="nav-icon">◷</span><span>Due fees</span>
+        </a>
+        <a class="nav-link {% if request.endpoint == 'reminder_center' %}is-active{% endif %}" href="{{ url_for('reminder_center') }}">
+          <span class="nav-icon">✉</span><span>Reminder center</span>
+        </a>
+        <a class="nav-link" href="{{ url_for('database_backup') }}">
+          <span class="nav-icon">↓</span><span>Database backup</span>
+        </a>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="sidebar-note"><span class="note-dot"></span><span>YOUR GYM, IN GOOD SHAPE</span></div>
+        <div class="admin-profile"><span class="avatar">A</span><span class="admin-identity"><strong>{{ session.get('admin_username', 'Admin') }}</strong><small>Administrator</small><form method="post" action="{{ url_for('logout') }}"><button class="logout-button" type="submit">Log out</button></form></span></div>
+      </div>
+    </aside>
+
+    <main class="main-area">
+      <header class="topbar">
+        <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false">☰</button>
+        <div class="breadcrumb">Workspace <span>/</span> <strong>{% block breadcrumb %}Dashboard{% endblock %}</strong></div>
+        <div class="topbar-right"><span class="today-date" id="today-date"></span><span class="topbar-avatar">A</span></div>
+      </header>
+      <section class="page-content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="flash-stack" role="status">
+              {% for category, message in messages %}
+                <div class="flash flash-{{ category }}">{{ message }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+      </section>
+    </main>
+  </div>
+  <script src="{{ url_for('static', filename='js/script.js') }}" defer></script>
+   <script>
+    if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("/static/sw.js");
+    }
+  </script>
+</body>
+</html>

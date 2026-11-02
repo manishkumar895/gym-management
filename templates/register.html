@@ -1,0 +1,116 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f5f1">
+
+  <title>Admin Registration | Form & Function</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+<main class="login-shell">
+  <section class="login-card">
+
+    <a class="brand login-brand" href="{{ url_for('login') }}">
+      <span class="brand-mark">F<span>+</span></span>
+      <span class="brand-copy">
+        <strong>FORM / FUNCTION</strong>
+        <small>GYM MANAGEMENT</small>
+      </span>
+    </a>
+
+    <p class="eyebrow">ADMINISTRATION</p>
+    <h1>Create account</h1>
+    <p class="login-subtitle">Register your gym administrator account.</p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-stack" role="alert">
+          {% for category, message in messages %}
+            <div class="flash flash-{{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <form class="login-form" method="POST" action="{{ url_for('register') }}">
+
+      <label class="field" for="full_name">
+        Full Name
+        <input
+          id="full_name"
+          name="full_name"
+          type="text"
+          placeholder="Enter your full name"
+          required>
+      </label>
+
+      <label class="field" for="username">
+        Username
+        <input
+          id="username"
+          name="username"
+          type="text"
+          placeholder="Choose a username"
+          autocomplete="username"
+          required>
+      </label>
+
+      <label class="field" for="email">
+        Email Address
+        <input
+          id="email"
+          name="email"
+          type="email"
+          placeholder="Enter your email"
+          autocomplete="email"
+          required>
+      </label>
+
+      <label class="field" for="password">
+        Password
+        <input
+          id="password"
+          name="password"
+          type="password"
+          placeholder="Minimum 8 characters"
+          autocomplete="new-password"
+          minlength="8"
+          required>
+      </label>
+
+      <label class="field" for="confirm_password">
+        Confirm Password
+        <input
+          id="confirm_password"
+          name="confirm_password"
+          type="password"
+          placeholder="Re-enter your password"
+          autocomplete="new-password"
+          minlength="8"
+          required>
+      </label>
+
+      <button class="button button-primary" type="submit">
+        Register Account
+      </button>
+
+    </form>
+
+    <div class="register-link">
+      <p>Already have an account?</p>
+      <a href="{{ url_for('login') }}">Back to Login</a>
+    </div>
+
+  </section>
+</main>
+</body>
+</html>

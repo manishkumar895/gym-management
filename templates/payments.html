@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Payments{% endblock %}
+{% block breadcrumb %}Payments{% endblock %}
+{% block content %}
+<div class="page-heading">
+  <div><p class="eyebrow">PAYMENTS / LEDGER</p><h1>Payments</h1><p class="page-subtitle">Every payment recorded for your gym.</p></div>
+  <a class="button button-primary" href="{{ url_for('add_payment') }}"><span>＋</span> Record payment</a>
+</div>
+{% if saved_payment %}
+<div class="receipt-success">
+  <div><strong>Payment recorded successfully.</strong><span>Your payment receipt is ready.</span></div>
+  <a class="button button-primary" href="{{ url_for('payment_receipt', payment_id=saved_payment.id) }}">View Receipt <span>↗</span></a>
+</div>
+{% endif %}
+<section class="content-section members-section">
+  <div class="section-heading"><div><p class="eyebrow">PAYMENT LEDGER</p><h2>All payments</h2></div><span class="directory-count">{{ '%02d'|format(payments|length) }} RECORDS</span></div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>MEMBER</th><th>DATE</th><th>METHOD</th><th>AMOUNT</th><th>DURATION</th><th>MEMBERSHIP PERIOD</th><th>TRANSACTION ID</th><th>NOTES</th><th></th></tr></thead>
+    <tbody>{% for payment in payments %}
+      <tr>
+        <td><a class="table-member-link" href="{{ url_for('member_payment_history', member_id=payment.member_id) }}">{{ payment.member_name }} <span>↗</span></a></td>
+        <td>{{ payment.payment_date }}</td><td>{{ payment.payment_method }}</td>
+        <td class="amount-cell">₹{{ '%.2f'|format(payment.amount) }}</td>
+        <td>{{ payment.duration_months }} month{% if payment.duration_months != 1 %}s{% endif %}</td>
+        <td>{{ payment.start_date }} – {{ payment.expiry_date }}</td>
+        <td>{{ payment.transaction_id or '—' }}</td><td class="notes-cell">{{ payment.notes or '—' }}</td>
+        <td><a class="edit-link" href="{{ url_for('payment_receipt', payment_id=payment.id) }}">View Receipt</a></td>
+      </tr>
+    {% else %}<tr><td colspan="9"><div class="empty-state"><span class="empty-icon">↗</span><strong>No payment records</strong><p>Recorded payments will be listed here.</p><a class="button button-small" href="{{ url_for('add_payment') }}">Record a payment</a></div></td></tr>{% endfor %}</tbody>
+  </table></div>
+</section>
+{% endblock %}

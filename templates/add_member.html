@@ -1,0 +1,314 @@
+{% extends "base.html" %}
+
+{% block title %}Add Member{% endblock %}
+{% block breadcrumb %}Add member{% endblock %}
+
+{% block content %}
+
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">MEMBER DIRECTORY / NEW RECORD</p>
+        <h1>Add a member</h1>
+        <p class="page-subtitle">
+            A few details to get their membership started.
+        </p>
+    </div>
+
+    <a class="button button-quiet" href="{{ url_for('members') }}">
+        ← Back to members
+    </a>
+</div>
+
+<form class="member-form"
+      method="post"
+      action="{{ url_for('add_member') }}">
+
+    <!-- PERSONAL DETAILS -->
+    <section class="form-section">
+
+        <div class="form-section-heading">
+            <span class="form-index">01</span>
+
+            <div>
+                <h2>Personal details</h2>
+                <p>Basic information about your member.</p>
+            </div>
+        </div>
+
+        <div class="form-grid">
+
+            <label class="field field-wide">
+                Full name <span class="required">*</span>
+
+                <input
+                    name="name"
+                    type="text"
+                    maxlength="100"
+                    value="{{ form_values.get('name', '') }}"
+                    placeholder="e.g. Aanya Sharma"
+                    required
+                    autocomplete="name">
+            </label>
+
+            <label class="field">
+                Mobile number <span class="required">*</span>
+
+                <input
+                    name="phone"
+                    type="tel"
+                    maxlength="20"
+                    value="{{ form_values.get('phone', '') }}"
+                    placeholder="e.g. +91 98765 43210"
+                    required
+                    autocomplete="tel">
+            </label>
+
+            <label class="field">
+                Email address
+
+                <input
+                    name="email"
+                    type="email"
+                    maxlength="120"
+                    value="{{ form_values.get('email', '') }}"
+                    placeholder="name@example.com"
+                    autocomplete="email">
+            </label>
+
+            <label class="field">
+                Age <span class="required">*</span>
+
+                <input
+                    name="age"
+                    type="number"
+                    min="13"
+                    max="100"
+                    value="{{ form_values.get('age', '') }}"
+                    placeholder="e.g. 24"
+                    required>
+            </label>
+
+            <label class="field">
+                Gender <span class="required">*</span>
+
+                <select name="gender" required>
+                    <option value="">Choose an option</option>
+
+                    {% for option in ['Female', 'Male', 'Other', 'Prefer not to say'] %}
+                        <option
+                            value="{{ option }}"
+                            {% if form_values.get('gender') == option %}selected{% endif %}>
+                            {{ option }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </label>
+
+            <label class="field">
+                Joining date <span class="required">*</span>
+
+                <input
+                    name="joining_date"
+                    type="date"
+                    value="{{ form_values.get('joining_date', '') }}"
+                    required>
+            </label>
+
+        </div>
+    </section>
+
+
+    <!-- MEMBERSHIP DETAILS -->
+    <section class="form-section">
+
+        <div class="form-section-heading">
+            <span class="form-index">02</span>
+
+            <div>
+                <h2>Membership details</h2>
+                <p>Set the plan and membership dates.</p>
+            </div>
+        </div>
+
+        <div class="form-grid">
+
+            <label class="field">
+                Membership plan <span class="required">*</span>
+
+                <input
+                    name="membership_plan"
+                    type="text"
+                    maxlength="60"
+                    value="{{ form_values.get('membership_plan', '') }}"
+                    placeholder="e.g. Strength & Conditioning"
+                    required>
+            </label>
+
+            <label class="field">
+                Monthly fee (₹) <span class="required">*</span>
+
+                <input
+                    name="monthly_fee"
+                    type="number"
+                    min="1"
+                    max="1000000"
+                    step="0.01"
+                    value="{{ form_values.get('monthly_fee', '') }}"
+                    placeholder="e.g. 1500"
+                    required>
+            </label>
+
+            <label class="field">
+                Membership start date <span class="required">*</span>
+
+                <input
+                    name="start_date"
+                    type="date"
+                    value="{{ form_values.get('start_date', '') }}"
+                    required>
+            </label>
+
+            <label class="field">
+                Membership due / expiry date <span class="required">*</span>
+
+                <input
+                    name="due_date"
+                    type="date"
+                    value="{{ form_values.get('due_date', '') }}"
+                    required>
+            </label>
+
+            <label class="field">
+                Status <span class="required">*</span>
+
+                <select name="status" required>
+                    {% for option in ['Active', 'Inactive'] %}
+                        <option
+                            value="{{ option }}"
+                            {% if form_values.get('status', 'Active') == option %}selected{% endif %}>
+                            {{ option }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </label>
+
+            <label class="field field-wide">
+                Notes
+
+                <textarea
+                    name="notes"
+                    rows="3"
+                    maxlength="1000"
+                    placeholder="Anything useful for the gym team">{{ form_values.get('notes', '') }}</textarea>
+            </label>
+
+        </div>
+    </section>
+
+
+    <!-- EMAIL NOTIFICATIONS -->
+    <section class="form-section">
+
+        <div class="form-section-heading">
+            <span class="form-index">03</span>
+
+            <div>
+                <h2>Email notifications</h2>
+                <p>Configure membership email reminders.</p>
+            </div>
+        </div>
+
+        <div class="form-grid">
+
+            <label class="field field-wide">
+
+                <span style="display:flex; align-items:center; gap:10px;">
+
+                    <input
+                        type="checkbox"
+                        name="email_opt_in"
+                        value="1"
+                        {% if form_values.get('email_opt_in') in ['1', 'on', 'true'] %}checked{% endif %}
+                        style="width:18px; height:18px;">
+
+                    Enable email notifications
+
+                </span>
+
+                <small>
+                    By enabling this option, the member agrees to receive a
+                    welcome email and membership expiry reminders at 7 days,
+                    3 days and on the expiry date.
+                </small>
+
+            </label>
+
+        </div>
+    </section>
+
+
+    <!-- WHATSAPP NOTIFICATIONS -->
+    <section class="form-section">
+
+        <div class="form-section-heading">
+            <span class="form-index">04</span>
+
+            <div>
+                <h2>WhatsApp notifications</h2>
+                <p>Configure membership and payment WhatsApp messages.</p>
+            </div>
+        </div>
+
+        <div class="form-grid">
+
+            <label class="field field-wide">
+
+                <span style="display:flex; align-items:center; gap:10px;">
+
+                    <input
+                        type="checkbox"
+                        name="whatsapp_opt_in"
+                        value="1"
+                        {% if form_values.get('whatsapp_opt_in') in ['1', 'on', 'true', 'yes'] %}checked{% endif %}
+                        style="width:18px; height:18px;">
+
+                    Enable WhatsApp notifications
+
+                </span>
+
+                <small>
+                    By enabling this option, the member agrees to receive
+                    WhatsApp messages for membership confirmation,
+                    expiry reminders (7 days, 3 days and on the expiry date),
+                    and payment confirmation.
+                </small>
+
+            </label>
+
+        </div>
+    </section>
+
+
+    <!-- FORM ACTIONS -->
+    <div class="form-actions">
+
+        <span>
+            <span class="required">*</span> Required fields
+        </span>
+
+        <div>
+            <a class="button button-quiet"
+               href="{{ url_for('members') }}">
+                Cancel
+            </a>
+
+            <button class="button button-primary" type="submit">
+                Save member <span>↗</span>
+            </button>
+        </div>
+
+    </div>
+
+</form>
+
+{% endblock %}

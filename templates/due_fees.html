@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Due Fees{% endblock %}
+{% block breadcrumb %}Due fees{% endblock %}
+{% block content %}
+<div class="page-heading">
+  <div><p class="eyebrow">MEMBERSHIP BILLING</p><h1>Fee status</h1><p class="page-subtitle">Review upcoming expiries and overdue memberships.</p></div>
+  <a class="button button-primary" href="{{ url_for('add_payment') }}"><span>＋</span> Record payment</a>
+</div>
+<nav class="fee-filters" aria-label="Filter fees by status">
+  {% for option in filter_options %}
+    <a class="fee-filter {% if status_filter == option %}is-active{% endif %}"
+       href="{{ url_for('due_fees', status=option) }}"
+       {% if status_filter == option %}aria-current="page"{% endif %}>{% if option == 'Due Soon' %}Expiring within 7 days{% else %}{{ option }}{% endif %}</a>
+  {% endfor %}
+</nav>
+<section class="content-section members-section">
+  <div class="table-wrap"><table>
+    <thead><tr><th>MEMBER</th><th>PHONE</th><th>PLAN</th><th>MONTHLY FEE</th><th>LAST PAYMENT</th><th>EXPIRY DATE</th><th>DAYS</th><th>STATUS</th><th>ACTION</th></tr></thead>
+    <tbody>{% for member in members %}
+      <tr>
+        <td><a class="table-member-link" href="{{ url_for('member_profile', member_id=member.id) }}">{{ member.name }} <span>↗</span></a></td>
+        <td>{{ member.phone }}</td><td>{{ member.membership_plan }}</td>
+        <td class="amount-cell">₹{{ '%.2f'|format(member.monthly_fee) }}</td>
+        <td>{{ member.last_payment_date or '—' }}</td><td>{{ member.next_due_date }}</td>
+        <td>{% if member.fee_status == 'Overdue' %}{{ member.days_overdue }} day{% if member.days_overdue != 1 %}s{% endif %} overdue{% elif member.fee_status == 'Due Today' %}Due today{% else %}{{ member.days_remaining }} day{% if member.days_remaining != 1 %}s{% endif %} remaining{% endif %}</td>
+        <td><span class="fee-status status-{{ member.fee_status|lower|replace(' ', '-') }}">{{ member.fee_status }}</span></td>
+        <td>
+          <a class="edit-link" href="{{ url_for('add_payment') }}?member_id={{ member.id }}">Record payment</a>
+          {% if member.fee_status != 'Paid' %}
+            <form class="reminder-form" method="post" action="{{ url_for('send_reminder', member_id=member.id) }}">
+              <input type="hidden" name="status_filter" value="{{ status_filter }}">
+              <button class="edit-link reminder-button" type="submit">Send Reminder</button>
+            </form>
+            <details class="reminder-preview"><summary>Reminder message</summary><pre>{{ member.reminder_message }}</pre></details>
+          {% endif %}
+        </td>
+      </tr>
+    {% else %}<tr><td colspan="9"><div class="empty-state"><strong>No members in this fee category</strong><p>Choose another filter or review all active members.</p></div></td></tr>{% endfor %}</tbody>
+  </table></div>
+</section>
+<p class="fee-note">Expiring within 7 days shows memberships ending soon. Due Today is the expiry date itself; past expiry dates are Overdue. Outstanding totals include fees due today or overdue.</p>
+{% endblock %}

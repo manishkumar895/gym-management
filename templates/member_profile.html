@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}{{ member.name }}{% endblock %}
+{% block breadcrumb %}Member profile{% endblock %}
+{% block content %}
+<div class="page-heading">
+  <div><p class="eyebrow">MEMBER PROFILE / #{{ '%04d'|format(member.id) }}</p><h1>{{ member.name }}</h1><p class="page-subtitle">Member since {{ member.joining_date }} · {{ member.membership_plan }}</p></div>
+  <div class="heading-actions"><a class="button button-quiet" href="{{ url_for('edit_member', member_id=member.id) }}">Edit member</a><a class="button button-primary" href="{{ url_for('add_payment') }}?member_id={{ member.id }}"><span>＋</span> Record payment</a></div>
+</div>
+<section class="profile-stat-grid">
+  <article class="profile-stat"><span class="stat-label">FEE STATUS</span><span class="fee-status status-{{ fee_info.fee_status|lower|replace(' ', '-') }}">{{ fee_info.fee_status }}</span></article>
+  <article class="profile-stat"><span class="stat-label">LAST PAYMENT</span><strong>{{ fee_info.last_payment_date or '—' }}</strong><small>{% if not fee_info.last_payment_date %}No payments recorded{% else %}Most recent payment{% endif %}</small></article>
+  <article class="profile-stat"><span class="stat-label">MEMBERSHIP EXPIRY</span><strong>{{ fee_info.next_due_date }}</strong><small>Saved membership expiry date</small></article>
+  <article class="profile-stat"><span class="stat-label">DAYS</span><strong>{% if fee_info.fee_status == 'Overdue' %}{{ fee_info.days_overdue }} overdue{% elif fee_info.fee_status == 'Due Today' %}Due today{% else %}{{ fee_info.days_remaining }} remaining{% endif %}</strong><small>Calculated from membership expiry</small></article>
+  <article class="profile-stat"><span class="stat-label">TOTAL PAID</span><strong>₹{{ '%.2f'|format(total_paid) }}</strong><small>{{ payments|length }} payment{% if payments|length != 1 %}s{% endif %} recorded</small></article>
+</section>
+<section class="profile-details content-section">
+  <div class="section-heading"><div><p class="eyebrow">MEMBER RECORD</p><h2>Personal & membership details</h2></div><span class="status-pill {% if member.status == 'Active' %}status-active{% else %}status-inactive{% endif %}"><i></i>{{ member.status }}</span></div>
+  <div class="details-grid">
+    <div><span>PHONE</span><strong>{{ member.phone }}</strong></div><div><span>EMAIL</span><strong>{{ member.email or '—' }}</strong></div>
+    <div><span>AGE / GENDER</span><strong>{{ member.age }} · {{ member.gender }}</strong></div><div><span>PLAN</span><strong>{{ member.membership_plan }}</strong></div>
+    <div><span>MONTHLY FEE</span><strong>₹{{ '%.2f'|format(member.monthly_fee) }}</strong></div><div><span>MEMBERSHIP START</span><strong>{{ member.start_date }}</strong></div>
+    <div><span>MEMBERSHIP DUE / EXPIRY</span><strong>{{ member.due_date }}</strong></div><div><span>NOTES</span><strong>{{ member.notes or '—' }}</strong></div>
+  </div>
+</section>
+<section class="content-section">
+  <div class="section-heading"><div><p class="eyebrow">PAYMENT RECORDS</p><h2>Payment history</h2></div><a class="text-link" href="{{ url_for('member_payment_history', member_id=member.id) }}">Full history <span>↗</span></a></div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>DATE</th><th>AMOUNT</th><th>METHOD</th><th>DURATION</th><th>MEMBERSHIP PERIOD</th><th>TRANSACTION ID</th><th>NOTES</th><th></th></tr></thead>
+    <tbody>{% for payment in payments[:5] %}
+      <tr><td>{{ payment.payment_date }}</td><td class="amount-cell">₹{{ '%.2f'|format(payment.amount) }}</td><td>{{ payment.payment_method }}</td><td>{{ payment.duration_months }} month{% if payment.duration_months != 1 %}s{% endif %}</td><td>{{ payment.start_date }} – {{ payment.expiry_date }}</td><td>{{ payment.transaction_id or '—' }}</td><td class="notes-cell">{{ payment.notes or '—' }}</td><td><a class="edit-link" href="{{ url_for('payment_receipt', payment_id=payment.id) }}">View Receipt</a></td></tr>
+    {% else %}<tr><td colspan="8"><div class="empty-state"><strong>No payment history yet</strong><p>Payments recorded for this member will appear here.</p></div></td></tr>{% endfor %}</tbody>
+  </table></div>
+</section>
+{% endblock %}

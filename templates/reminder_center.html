@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Reminder Center{% endblock %}
+{% block breadcrumb %}Reminder center{% endblock %}
+{% block content %}
+<div class="page-heading">
+  <div><p class="eyebrow">MEMBERSHIP FOLLOW-UP</p><h1>Reminder center</h1><p class="page-subtitle">Review upcoming and expired memberships, then copy a ready-to-send message.</p></div>
+</div>
+<section class="content-section members-section">
+  <div class="table-wrap"><table>
+    <thead><tr><th>MEMBER</th><th>MOBILE NUMBER</th><th>MEMBERSHIP EXPIRY</th><th>DAYS REMAINING</th><th>REMINDER STATUS</th><th>MESSAGE</th></tr></thead>
+    <tbody>{% for reminder in reminders %}
+      <tr>
+        <td><a class="table-member-link" href="{{ url_for('member_profile', member_id=reminder.id) }}">{{ reminder.name }} <span>↗</span></a></td>
+        <td>{{ reminder.phone }}</td>
+        <td>{{ reminder.due_date }}</td>
+        <td>{% if reminder.days_remaining < 0 %}{{ -reminder.days_remaining }} day{% if reminder.days_remaining != -1 %}s{% endif %} overdue{% elif reminder.days_remaining == 0 %}Today{% elif reminder.days_remaining == 1 %}Tomorrow{% else %}{{ reminder.days_remaining }} days{% endif %}</td>
+        <td><span class="fee-status {% if reminder.days_remaining < 0 %}status-overdue{% elif reminder.days_remaining <= 1 %}status-due-today{% else %}status-due-soon{% endif %}">{{ reminder.reminder_status }}</span></td>
+        <td>
+          <details class="reminder-preview">
+            <summary>Preview message</summary>
+            <pre class="reminder-message">{{ reminder.reminder_message }}</pre>
+            <button class="edit-link reminder-button copy-message" type="button">Copy Message</button>
+            <span class="copy-status" role="status" aria-live="polite"></span>
+          </details>
+        </td>
+      </tr>
+    {% else %}<tr><td colspan="6"><div class="empty-state"><strong>No memberships need a reminder</strong><p>Active memberships expiring within 7 days and already-expired memberships will appear here.</p></div></td></tr>{% endfor %}</tbody>
+  </table></div>
+</section>
+<script>
+  document.addEventListener("click", async (event) => {
+    const button = event.target.closest(".copy-message");
+    if (!button) return;
+
+    const preview = button.closest(".reminder-preview");
+    const message = preview.querySelector(".reminder-message").textContent;
+    const status = preview.querySelector(".copy-status");
+    try {
+      await navigator.clipboard.writeText(message);
+      status.textContent = "Message copied.";
+    } catch (error) {
+      status.textContent = "Could not copy the message. Select and copy it from the preview.";
+    }
+  });
+</script>
+{% endblock %}
