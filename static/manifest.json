@@ -2,6 +2,7 @@
   "id": "/",
   "name": "Form & Function Gym Management",
   "short_name": "Form & Function",
+  "description": "Manage gym members, memberships, payments and reminders.",
   "start_url": "/login",
   "scope": "/",
   "display": "standalone",
