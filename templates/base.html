@@ -75,9 +75,15 @@
   </div>
   <script src="{{ url_for('static', filename='js/script.js') }}" defer></script>
    <script>
-    if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("/static/sw.js");
-    }
-  </script>
+if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function () {
+        navigator.serviceWorker.register(
+            "{{ url_for('static', filename='sw.js') }}"
+        ).catch(function (error) {
+            console.error("Service Worker registration failed:", error);
+        });
+    });
+}
+</script>
 </body>
 </html>

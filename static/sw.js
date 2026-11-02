@@ -1,4 +1,6 @@
-self.addEventListener("install", () => {
+const CACHE_NAME = "gym-management-v1";
+
+self.addEventListener("install", event => {
     self.skipWaiting();
 });
 

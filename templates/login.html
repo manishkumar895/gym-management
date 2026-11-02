@@ -12,6 +12,12 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+
+<meta name="theme-color" content="#f4f5f1">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+
 </head>
 
 <body>
@@ -79,5 +85,16 @@
 
   </section>
 </main>
+<script>
+if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function () {
+        navigator.serviceWorker.register(
+            "{{ url_for('static', filename='sw.js') }}"
+        ).catch(function (error) {
+            console.error("Service Worker registration failed:", error);
+        });
+    });
+}
+</script>
 </body>
 </html>
